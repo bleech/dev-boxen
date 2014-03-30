@@ -1,6 +1,7 @@
 require boxen::environment
 require homebrew
 require gcc
+import "./yadr.pp"
 
 Exec {
   group       => 'staff',
@@ -56,7 +57,6 @@ node default {
   include dnsmasq
   include git
   include hub
-  include nginx
 
   # fail if FDE is not enabled
   if $::root_encrypted == 'no' {
@@ -64,24 +64,41 @@ node default {
   }
 
   # node versions
-  include nodejs::v0_6
-  include nodejs::v0_8
+  # include nodejs::v0_6
+  # include nodejs::v0_8
   include nodejs::v0_10
 
   # default ruby versions
-  ruby::version { '1.9.3': }
+  # ruby::version { '1.9.3': }
   ruby::version { '2.0.0': }
-  ruby::version { '2.1.0': }
-  ruby::version { '2.1.1': }
+  # ruby::version { '2.1.0': }
+  # ruby::version { '2.1.1': }
+  class { 'ruby::global':
+    version => '2.0.0'
+  }
 
   # common, useful packages
   package {
     [
       'ack',
       'findutils',
-      'gnu-tar'
+      'gnu-tar',
+      'openssl',
+      'cairo',
+      'jpegoptim',
+      'optipng',
+      'wkhtmltopdf'
     ]:
   }
+
+  include imagemagick
+  include yadr
+  include sublime_text_2
+  include virtualbox
+  include vagrat
+  include wget
+  include heroku
+  include sequel_pro
 
   file { "${boxen::config::srcdir}/our-boxen":
     ensure => link,
